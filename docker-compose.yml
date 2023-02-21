@@ -1,0 +1,75 @@
+# Filename: docker-compose.yml
+
+version: "3.9"
+services:
+  apache:
+    container_name: nmt_apache
+    build: ./docker/apache
+    links:
+      - php
+    ports:
+      - "8181:80"
+    volumes:
+      - ./src:/usr/local/apache2/htdocs
+  php:
+    container_name: nmt_php
+    build: ./docker/php
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./src:/usr/local/apache2/htdocs
+    working_dir: /usr/local/apache2/htdocs
+
+  mongo:
+    image: mongo:latest
+    container_name: nmt_mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./database/mongodb/db:/data/db
+      - ./database/mongodb/dev.archive:/Databases/dev.archive
+      - ./database/mongodb/production:/Databases/production
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: nmt_mexpress
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_URL=mongodb://root:password@mongo:27017/?authSource=admin
+      - ME_CONFIG_BASICAUTH_USERNAME=mexpress
+      - ME_CONFIG_BASICAUTH_PASSWORD=mexpress
+    links:
+      - mongo
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+#  mysql:
+#    image: mysql:latest
+#    container_name: nmt_mysql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: "ThisIsMyRootPassword"
+#      MYSQL_DATABASE: helloworld
+#      MYSQL_USER: helloworld_user
+#      MYSQL_PASSWORD: 'helloworld-password'
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - ./database/mysql:/var/lib/mysql
+#  phpmyadmin:
+#    image: phpmyadmin/phpmyadmin:latest
+#    container_name: nmt_pma
+#    links:
+#      - mysql
+#    environment:
+#      PMA_HOST: mysql
+#      PMA_PORT: 3306
+#      PMA_ARBITRARY: 1
+#    restart: always
+#    ports:
+#      - '8085:80'
+
