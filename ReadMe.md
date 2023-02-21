@@ -15,3 +15,8 @@ Project Name: nmtafe-docker-pamm
 - Ubuntu Username: l306
 - Ubuntu Password: L306Pass
 
+
+
+## Source / Inspiration
+
+- https://devops.tutorials24x7.com/blog/containerize-php-with-apache-mysql-and-mongodb-using-docker-containers
